@@ -1,63 +1,58 @@
-import React from 'react';
+import React from "react";
 
-function Cont2() {
+function Cont2({ forecastData, unit, setUnit }) {
+  const getDayName = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", { weekday: "short" }); // Ej: "Thu"
+  };
+
+  const handleUnitChange = (selectedUnit) => {
+    setUnit(selectedUnit);
+  };
+
+  const unitSymbol = unit === "metric" ? "°C" : "°F";
+
   return (
-    <div className="bg-black text-white px-6 py-8 md:px-12 md:py-10">
-      {/* Botones °C y °F */}
-      <div className="flex justify-end gap-2 mb-8">
-        <button className="bg-gray-700 hover:bg-gray-600 rounded-full w-10 h-10 font-semibold">°C</button>
-        <button className="bg-gray-700 hover:bg-gray-600 rounded-full w-10 h-10 font-semibold">°F</button>
+    <div className="bg-[#100E1D] text-white py-10 px-6 md:px-12">
+      {/* Botones °C / °F */}
+      <div className="flex justify-end gap-2 mb-6">
+        <button
+          onClick={() => handleUnitChange("metric")}
+          className={`rounded-full px-4 py-1 font-bold ${
+            unit === "metric" ? "bg-white text-black" : "bg-gray-700"
+          }`}
+        >
+          °C
+        </button>
+        <button
+          onClick={() => handleUnitChange("imperial")}
+          className={`rounded-full px-4 py-1 font-bold ${
+            unit === "imperial" ? "bg-white text-black" : "bg-gray-700"
+          }`}
+        >
+          °F
+        </button>
       </div>
 
-      {/* Cards de pronóstico */}
+      {/* Forecast Cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        {/* Card 1 */}
-        <div className="bg-[#1E213A] p-4 flex flex-col items-center">
-          <p className="mb-2">Tomorrow</p>
-          <img src="/assets/img2.png" alt="weather" className="w-14 h-14" />
-          <div className="mt-2 text-sm">
-            <span>29°C</span> / <span>18°C</span>
+        {forecastData.map((day, index) => (
+          <div key={index} className="bg-[#1E213A] p-4 text-center">
+            <p className="mb-2">{getDayName(day.dt_txt)}</p>
+            <img
+              src={`https://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`}
+              alt={day.weather[0].description}
+              className="mx-auto"
+            />
+            <p className="mt-2">
+              {Math.round(day.main.temp_max)}{unitSymbol} / {Math.round(day.main.temp_min)}{unitSymbol}
+            </p>
           </div>
-        </div>
-
-        {/* Card 2 */}
-        <div className="bg-[#1E213A] p-4 flex flex-col items-center">
-          <p className="mb-2">Thu, 24 Jul</p>
-          <img src="/assets/img3.png" alt="weather" className="w-14 h-14" />
-          <div className="mt-2 text-sm">
-            <span>25°C</span> / <span>12°C</span>
-          </div>
-        </div>
-
-        {/* Card 3 */}
-        <div className="bg-[#1E213A] p-4 flex flex-col items-center">
-          <p className="mb-2">Fri, 25 Jul</p>
-          <img src="/assets/img4.png" alt="weather" className="w-14 h-14" />
-          <div className="mt-2 text-sm">
-            <span>22°C</span> / <span>10°C</span>
-          </div>
-        </div>
-
-        {/* Card 4 */}
-        <div className="bg-[#1E213A] p-4 flex flex-col items-center">
-          <p className="mb-2">Sat, 26 Jul</p>
-          <img src="/assets/img5.png" alt="weather" className="w-14 h-14" />
-          <div className="mt-2 text-sm">
-            <span>24°C</span> / <span>13°C</span>
-          </div>
-        </div>
-
-        {/* Card 5 */}
-        <div className="bg-[#1E213A] p-4 flex flex-col items-center">
-          <p className="mb-2">Sun, 27 Jul</p>
-          <img src="/assets/img6.png" alt="weather" className="w-14 h-14" />
-          <div className="mt-2 text-sm">
-            <span>28°C</span> / <span>16°C</span>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );
 }
 
 export default Cont2;
+

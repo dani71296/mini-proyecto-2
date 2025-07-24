@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import SearchModal from "./SearchModal";
 
 
-function Cont1({ city, setCity, weatherData }) {
+function Cont1({ city, setCity, weatherData, onUseMyLocation }) {
   const [showModal, setShowModal] = useState(false);
   return (
     <div className="relative w-full min-h-screen md:w-[30%] bg-[#1E213A] overflow-hidden">
@@ -28,7 +28,9 @@ function Cont1({ city, setCity, weatherData }) {
           >
             Search for places
           </button>
-          <button className="bg-gray-500/40 p-2 rounded-full hover:bg-gray-600 transition">
+          <button className="bg-gray-500/40 p-2 rounded-full hover:bg-gray-600 transition"
+            onClick={onUseMyLocation}
+          >
             📍
           </button>
         </div>

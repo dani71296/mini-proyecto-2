@@ -6,18 +6,19 @@ import Cont3 from "./components/Cont3";
 function App() {
   const [city, setCity] = useState("Puebla");
   const [weatherData, setWeatherData] = useState(null);
+  const [forecastData, setForecastData] = useState([]);
+  /* para el uso de f y c */
+  const [unit, setUnit] = useState("metric"); 
 
-  // Función para obtener datos del clima con la API
+  const apiKey = "e93f6c7fe271ee903820f8bac03cbd8b";
+
+  // Datos de clima actual
   const fetchWeatherData = async (cityName) => {
     try {
-      // Usa tu API key y la URL correspondiente
-      const apiKey = "e93f6c7fe271ee903820f8bac03cbd8b";
       const url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=${apiKey}`;
-
       const res = await fetch(url);
       if (!res.ok) throw new Error("Ciudad no encontrada");
       const data = await res.json();
-
       setWeatherData(data);
     } catch (error) {
       console.error(error);
@@ -25,16 +26,60 @@ function App() {
     }
   };
 
-  // Cuando cambia la ciudad, obtiene datos
+  // Datos del pronóstico para los próximos 5 días
+  const fetchForecastData = async (cityName) => {
+    try {
+      const url = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&units=${unit}&appid=${apiKey}`;
+
+
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("No se pudo obtener el pronóstico");
+      const data = await res.json();
+
+      // Filtrar solo los datos de las 12:00:00 de cada día
+      const filtered = data.list.filter((item) => item.dt_txt.includes("12:00:00"));
+      setForecastData(filtered);
+    } catch (error) {
+      console.error(error);
+      setForecastData([]);
+    }
+  };
+
   useEffect(() => {
     fetchWeatherData(city);
-  }, [city]);
+    fetchForecastData(city);
+    fetchWeatherData(city);
+  }, [city,unit]);
+  /* funcion para usar locaclizacion de ip */
+  const fetchCityFromIP = async () => {
+  try {
+    const res = await fetch("https://ipinfo.io/json?token=aa900240f59a87");
+    const data = await res.json();
+    if (data && data.city) {
+      setCity(data.city); // Esto dispara fetchWeatherData desde el useEffect
+    } else {
+      console.error("No se pudo obtener ciudad desde IP");
+    }
+  } catch (error) {
+    console.error("Error al obtener ubicación por IP", error);
+  }
+};
+  
 
   return (
     <div className="md:flex min-h-screen">
-      <Cont1 city={city} setCity={setCity} weatherData={weatherData} />
+        <Cont1
+        city={city}
+        setCity={setCity}
+        weatherData={weatherData}
+        onUseMyLocation={fetchCityFromIP}
+      />
       <div className="flex-1">
-        <Cont2 weatherData={weatherData} />
+        <Cont2
+        forecastData={forecastData}
+        unit={unit}
+        setUnit={setUnit}
+      />
         <Cont3 weatherData={weatherData} />
       </div>
     </div>
