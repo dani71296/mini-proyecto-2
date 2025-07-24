@@ -6,20 +6,33 @@ function getWindDirection(degree) {
   return directions[index];
 }
 
-function Cont3({ weatherData }) {
+function Cont3({ weatherData, unit }) {
   if (!weatherData) return null;
 
+  const windSpeed =
+    unit === 'metric'
+      ? `${weatherData.wind.speed} m/s`
+      : `${(weatherData.wind.speed * 2.237).toFixed(1)} mph`;
+
+  const visibility =
+    unit === 'metric'
+      ? `${(weatherData.visibility / 1000).toFixed(1)} km`
+      : `${(weatherData.visibility / 1609).toFixed(1)} miles`;
+
+  const pressure =
+    unit === 'metric'
+      ? `${weatherData.main.pressure} mb`
+      : `${(weatherData.main.pressure * 0.02953).toFixed(2)} inHg`;
+
   return (
-    <div className="bg-black text-white px-6 py-10 md:px-12">
+    <div className="bg-[#100E1D] text-white px-6 py-10 md:px-12">
       <h2 className="text-xl font-semibold mb-8 text-center md:text-left">Today’s Highlights</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Card 1 - Wind Status */}
         <div className="bg-[#1E213A] p-6 flex flex-col items-center md:items-start">
           <p className="mb-2">Wind Status</p>
-          <h3 className="text-4xl font-bold mb-2">
-            {weatherData.wind.speed} <span className="text-xl font-light">m/s</span>
-          </h3>
+          <h3 className="text-4xl font-bold mb-2">{windSpeed}</h3>
           <div className="flex items-center gap-2 mt-2">
             <div className="rotate-45 bg-gray-300 w-8 h-8 flex items-center justify-center rounded-full text-black">
               ➤
@@ -50,17 +63,13 @@ function Cont3({ weatherData }) {
         {/* Card 3 - Visibility */}
         <div className="bg-[#1E213A] p-6 flex flex-col items-center md:items-start">
           <p className="mb-2">Visibility</p>
-          <h3 className="text-4xl font-bold">
-            {weatherData.visibility / 1000} <span className="text-xl font-light">km</span>
-          </h3>
+          <h3 className="text-4xl font-bold">{visibility}</h3>
         </div>
 
         {/* Card 4 - Air Pressure */}
         <div className="bg-[#1E213A] p-6 flex flex-col items-center md:items-start">
           <p className="mb-2">Air Pressure</p>
-          <h3 className="text-4xl font-bold">
-            {weatherData.main.pressure} <span className="text-xl font-light">mb</span>
-          </h3>
+          <h3 className="text-4xl font-bold">{pressure}</h3>
         </div>
       </div>
     </div>

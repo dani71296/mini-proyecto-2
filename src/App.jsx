@@ -28,22 +28,46 @@ function App() {
 
   // Datos del pronóstico para los próximos 5 días
   const fetchForecastData = async (cityName) => {
-    try {
-      const url = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&units=${unit}&appid=${apiKey}`;
+  try {
+    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&units=${unit}&appid=${apiKey}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("No se pudo obtener el pronóstico");
 
+    const data = await res.json();
 
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("No se pudo obtener el pronóstico");
-      const data = await res.json();
+    // Agrupar por día
+    const grouped = {};
 
-      // Filtrar solo los datos de las 12:00:00 de cada día
-      const filtered = data.list.filter((item) => item.dt_txt.includes("12:00:00"));
-      setForecastData(filtered);
-    } catch (error) {
-      console.error(error);
-      setForecastData([]);
-    }
-  };
+    data.list.forEach((item) => {
+      const date = item.dt_txt.split(" ")[0];
+      if (!grouped[date]) grouped[date] = [];
+      grouped[date].push(item);
+    });
+
+    // Convertir a arreglo de días con min y max reales
+    const dailyForecast = Object.keys(grouped).map((date) => {
+      const entries = grouped[date];
+      const max = Math.max(...entries.map(e => e.main.temp_max));
+      const min = Math.min(...entries.map(e => e.main.temp_min));
+      const icon = entries[4]?.weather[0].icon || entries[0].weather[0].icon;
+      const description = entries[4]?.weather[0].description || "";
+
+      return {
+        dt_txt: date,
+        main: { temp_max: max, temp_min: min },
+        weather: [{ icon, description }],
+      };
+    });
+
+    // Omitir el día de hoy y tomar los siguientes 5
+    setForecastData(dailyForecast.slice(1, 6));
+
+  } catch (error) {
+    console.error(error);
+    setForecastData([]);
+  }
+};
+
 
   useEffect(() => {
     fetchWeatherData(city);
@@ -80,7 +104,7 @@ function App() {
         unit={unit}
         setUnit={setUnit}
       />
-        <Cont3 weatherData={weatherData} />
+        <Cont3 weatherData={weatherData} unit={unit} />
       </div>
     </div>
   );
