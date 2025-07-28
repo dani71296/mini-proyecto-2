@@ -7,7 +7,7 @@ function App() {
   const [city, setCity] = useState("Puebla");
   const [weatherData, setWeatherData] = useState(null);
   const [forecastData, setForecastData] = useState([]);
-  /* para el uso de f y c */
+  /* para el uso del os botones f y c */
   const [unit, setUnit] = useState("metric"); 
 
   const apiKey = "e93f6c7fe271ee903820f8bac03cbd8b";
@@ -26,25 +26,21 @@ function App() {
     }
   };
 
-  // Datos del pronóstico para los próximos 5 días
+  // pronóstico para 5 días
   const fetchForecastData = async (cityName) => {
   try {
     const url = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&units=${unit}&appid=${apiKey}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error("No se pudo obtener el pronóstico");
-
     const data = await res.json();
-
-    // Agrupar por día
     const grouped = {};
-
     data.list.forEach((item) => {
       const date = item.dt_txt.split(" ")[0];
       if (!grouped[date]) grouped[date] = [];
       grouped[date].push(item);
     });
 
-    // Convertir a arreglo de días con min y max reales
+    // arreglo de días con min y max reales
     const dailyForecast = Object.keys(grouped).map((date) => {
       const entries = grouped[date];
       const max = Math.max(...entries.map(e => e.main.temp_max));
@@ -58,8 +54,6 @@ function App() {
         weather: [{ icon, description }],
       };
     });
-
-    // Omitir el día de hoy y tomar los siguientes 5
     setForecastData(dailyForecast.slice(1, 6));
 
   } catch (error) {

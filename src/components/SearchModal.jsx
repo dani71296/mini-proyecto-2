@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import cities from "../data/cities.json"; // Asegúrate que exista el archivo en src/data
-
+import cities from "../data/cities.json"; 
 function SearchModal({ onClose, onSelectCity }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -9,7 +8,7 @@ function SearchModal({ onClose, onSelectCity }) {
     const filtered = cities.filter(city =>
       city.name.toLowerCase().includes(query.toLowerCase())
     );
-    setResults(filtered.slice(0, 3)); // Solo los 3 primeros
+    setResults(filtered.slice(0, 3)); // Solo los 3 primeros datos
   };
 
   return (

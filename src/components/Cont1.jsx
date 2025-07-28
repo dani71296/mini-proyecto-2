@@ -39,7 +39,7 @@ function Cont1({ city, setCity, weatherData, onUseMyLocation }) {
         <div className="flex flex-col items-center gap-6 mt-10 md:mt-0">
           {weatherData ? (
             <>
-              {/* Aquí pondremos la lógica para mostrar la imagen según el clima */}
+              {/* Aquí esta la lógica para mostrar la imagen según el clima */}
               <img
                 src={getWeatherIcon(weatherData.weather[0].icon)}
                 alt={weatherData.weather[0].description}
