@@ -7,15 +7,17 @@ function App() {
   const [city, setCity] = useState("Puebla");
   const [weatherData, setWeatherData] = useState(null);
   const [forecastData, setForecastData] = useState([]);
+  const my_secret = import.meta.env.VITE_MY_SECRET
+
   /* para el uso del os botones f y c */
   const [unit, setUnit] = useState("metric"); 
 
-  const apiKey = "e93f6c7fe271ee903820f8bac03cbd8b";
+  
 
   // Datos de clima actual
   const fetchWeatherData = async (cityName) => {
     try {
-      const url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=${apiKey}`;
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=${my_secret}`;
       const res = await fetch(url);
       if (!res.ok) throw new Error("Ciudad no encontrada");
       const data = await res.json();
@@ -29,7 +31,7 @@ function App() {
   // pronóstico para 5 días
   const fetchForecastData = async (cityName) => {
   try {
-    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&units=${unit}&appid=${apiKey}`;
+    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&units=${unit}&appid=${my_secret}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error("No se pudo obtener el pronóstico");
     const data = await res.json();
